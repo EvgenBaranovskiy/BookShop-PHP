@@ -7,7 +7,11 @@
         <div class="col-4 d-flex justify-content-center">
             <div>
                 <img class='card book-full-description-img' src="<?=$book->ImgCover->ImgUrl?>">
-                <a class="btn btn-success w-100 mt-1" href="<?= "/order/create/" .$book->ID ?>">Order for <?=$book->Price?>$</a>
+                <?php if ($is_admin): ?>
+                    <a class="btn btn-warning w-100 mt-1" href="<?= "/book/edit/" .$book->ID ?>">Edit</a>
+                <?php else: ?>
+                    <a class="btn btn-success w-100 mt-1" href="<?= "/order/create/" .$book->ID ?>">Order for <?=$book->Price?>$</a>
+                <?php endif; ?>
             </div>
         </div>
         <div class="col-8">

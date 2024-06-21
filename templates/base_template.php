@@ -26,6 +26,12 @@
                     <li class="nav-item">
                         <a class="nav-link <?= ($_SERVER['REQUEST_URI'] == "/book/genres") ? "active" : "" ?>" href="/book/genres">Genres</a>
                     </li>
+                    <?php ?>
+                    <?php if ($is_admin) { ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= ($_SERVER['REQUEST_URI'] == "/book/create") ? "active" : "" ?>" href="/book/create">Add book</a>
+                    </li>
+                    <?php } ?>
                     <li class="nav-item">
                         <a class="nav-link <?=strpos($_SERVER['REQUEST_URI'], "/order/show") === 0 ? "active" : "" ?>" href="/order/show/1">Orders</a>
                     </li>

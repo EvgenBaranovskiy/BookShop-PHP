@@ -6,13 +6,26 @@ require_once "entities/BookCover.php";
 
 class BookModel extends Model
 {
+    public const BOOK_COVERS_DIR = "./www/img/book_covers/";
+
     public function GetBookById($book_id): ?Book
     {
         $books = $this->GetAllBooks();
 
         foreach ($books as $book)
             if ($book->ID == $book_id)
-                return $book;
+            {
+                $book_covers = $this->GetAllBookCovers();
+                foreach ($book_covers as $book_cover)
+                {
+                    if ($book_cover->BookId == $book_id)
+                    {
+                        $book->ImgCover = $book_cover;
+                        return $book;
+                    }
+                }
+            }
+
         return null;
     }
 
@@ -91,5 +104,50 @@ class BookModel extends Model
             );
         }
         return $book_covers;
+    }
+
+    public function CreateBook(Book $new_book) : Book
+    {
+        $new_book->Name = str_replace("'", "\'", $new_book->Name);
+        $new_book->Author = str_replace("'", "\'", $new_book->Author);
+        $new_book->FullDescription = str_replace("'", "\'", $new_book->FullDescription);
+        $new_book->ShortDescription = str_replace("'", "\'", $new_book->ShortDescription);
+
+        $this->dbcon->insert($this::BOOKS_TABLE, 
+                            "name, author, short_description, full_description, price, page_count, genre_id", 
+                            "'{$new_book->Name}', '{$new_book->Author}', '{$new_book->ShortDescription}', '{$new_book->FullDescription}', {$new_book->Price}, {$new_book->PageCount}, {$new_book->Genre->ID}");
+
+        
+        $new_book->ID = $this->dbcon->get_last_insert_id();
+        $new_book->ImgCover->BookId = $new_book->ID;
+
+        $this->dbcon->insert($this::BOOK_COVERS_TABLE, 
+                            "img_url, book_id ", 
+                            "'{$new_book->ImgCover->ImgUrl}', {$new_book->ID}");
+
+        $new_book->ImgCover->ID = $this->dbcon->get_last_insert_id();
+
+        return $new_book;
+    }
+
+    public function EditBook(Book $new_book) : bool
+    {
+
+
+        $updateBookRes1 =    $this->dbcon->change("name, author, short_description, full_description, price, page_count, genre_id", 
+                            "`{$new_book->Name}`, `{$new_book->Author}`, `{$new_book->ShortDescription}`, `{$new_book->FullDescription}`, `{$new_book->Price}`, `{$new_book->PageCount}`, `{$new_book->Genre->ID}`",
+                            $new_book->ID,
+                            $this::BOOKS_TABLE);
+        
+        if ($updateBookRes1)
+        {
+            $updateBookRes2 =   $this->dbcon->change("img_url, book_id",
+            "`{$new_book->ImgCover->ImgUrl}`, `{$new_book->ID}`",
+            $new_book->ImgCover->ID,
+            $this::BOOK_COVERS_TABLE
+           );
+        }
+
+        return $updateBookRes1 && $updateBookRes2;
     }
 }

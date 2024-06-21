@@ -37,7 +37,6 @@
                         echo "<div class='text-success'>$msg</div>";
                     }
                 ?>
-
                 <button class="btn btn-success w-100 mt-3" name="reg-btn" type="submit">
                     Registration
                 </button>

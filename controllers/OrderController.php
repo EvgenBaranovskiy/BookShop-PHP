@@ -69,6 +69,7 @@ class OrderController extends Controller
         }
 
         if (!is_null($book)) {
+
             if (isset($_POST['order-btn'])) {
                 if (empty($_POST['buyer-name'])) {
                     $error = "You must enter a name!";

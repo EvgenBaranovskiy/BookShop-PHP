@@ -32,7 +32,6 @@ class UserController extends Controller
                     $error = "Not all fields were filled in!";
                 } else {
                     $user = $this->_userModel->GetUserByLogin($_POST['login']);
-
                     if (is_null($user) || $user->Password != $_POST['password'])
                     {
                         $error = "Wrong login or password!";

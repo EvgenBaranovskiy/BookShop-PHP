@@ -67,17 +67,38 @@ class DBConnection
 
     public function change(string $cols, string $values, int $id, string $tableName)
     {
+        echo $values . "<br>";
+        // Удаляем пробелы вокруг запятых в строке столбцов и разбиваем строку по запятым
         $cols = explode(",", str_replace(' ', '', $cols));
-        $values = explode(",", $values);
-        $new_values = "";
         
-        for ($i = 0; $i < count($cols); $i++)
-        {
-            $new_values .= $cols[$i] . "=" . $values[$i] . ($i != count($cols) - 1 ? "," : " ");
+
+        // Используем регулярное выражение для корректного разбиения строки значений
+        preg_match_all("/`([^`]*[^`\s,][^`]*)`/", $values, $matches);
+        $values = $matches[1];
+        
+        // Проверяем, что количество столбцов и значений совпадает
+        if (count($cols) !== count($values)) {
+            echo "Error: The number of columns does not match the number of values.";
+            return false;
         }
+    
+        $values = array_map(function($s) {
+            return str_replace("'", "\\'", $s);
+        }, $values);
+
+        $new_values = "";
+        // Формируем строку пар "столбец=значение"
+        for ($i = 0; $i < count($cols); $i++) {
+            $new_values .= $cols[$i] . "='" . $values[$i] . "'" . ($i != count($cols) - 1 ? ", " : " ");
+        }
+
         
+    
         $query = "UPDATE $tableName SET $new_values WHERE ID = $id";
 
+        echo "<br><br>SQL:<br>";
+        var_dump($query);
+        
         if ($this->conn->query($query) === true) {
             return true;
         } 
@@ -85,6 +106,11 @@ class DBConnection
             echo "Error: " . $this->conn->error;
             return false;
         }
+    }
+    
+    public function get_last_insert_id() : int
+    {
+        return $this->conn->insert_id;
     }
 
     public function  __construct(string $dbName, string $hostname = 'localhost', string $username = 'root', string $password = '', int $port = 3307)

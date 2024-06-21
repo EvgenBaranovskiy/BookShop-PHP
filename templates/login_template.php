@@ -35,9 +35,7 @@ ob_start();
         </div>
     </div>
 </div>
-<br>
-<b style="color: red;"><?= $error ?></b>
 <?php
-$content = ob_get_clean();
-require "base_template.php";
+    $content = ob_get_clean();
+    require "base_template.php";
 ?>

@@ -10,7 +10,7 @@ $frame_end = ($frame_start + $pagination_frame_size) > $total_page_count ? $tota
 ob_start();
 ?>
 <div class="book-cards-container">
-    <?php foreach ($books_on_page as $book) { ?>
+    <?php foreach ($books_on_page as $book): ?>
         <div class="book-card-preview">
             <div class="book-card-img-preview">
                 <img src="<?= $book->ImgCover->ImgUrl ?>">
@@ -30,9 +30,14 @@ ob_start();
             </div>
 
             <a class="btn btn-primary w-100 mt-1" href="<?= "/book/show/" . $book->ID ?>">Read more</a>
+
+            <?php if (!$is_admin): ?>
             <a class="btn btn-success w-100 mt-1" href="<?= "/order/create/" . $book->ID ?>">Order now</a>
+            <?php else: ?>
+            <a class="btn btn-warning w-100 mt-1 " href="<?= "/book/edit/" . $book->ID ?>">Edit</a>
+            <?php endif; ?>
         </div>
-    <?php } ?>
+    <?php endforeach; ?>
 </div>
 
 <!--Pagination-->
