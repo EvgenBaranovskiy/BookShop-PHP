@@ -106,6 +106,6 @@ class OrderModel extends Model
 
     public function UpdateOrderStatus(int $order_id, int $new_status_id)
     {
-        return $this->dbcon->change("status_id", $new_status_id, $order_id, self::ORDERS_TABLE);
+        return $this->dbcon->change("status_id", "`{$new_status_id}`", $order_id, self::ORDERS_TABLE);
     }
 }

@@ -52,6 +52,7 @@ class OrderController extends Controller
 
     public function apply($order_id) {
         if ($this->_userModel->is_admin()) {
+            var_dump($_POST);
             $this->_orderModel->UpdateOrderStatus($order_id, $_POST['new-order-status']);
             header("Location: " . $_SERVER['HTTP_REFERER']);
         } else {
